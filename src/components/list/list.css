@@ -4,7 +4,7 @@
     flex-direction: column;
 }
 
-/* Hide scrollbars but keep scrollable content */
+/* Hide scrollbars but keep scrollable content feature for different browsers */
 /* For Chrome, Edge, Safari */
 ::-webkit-scrollbar {
   width: 0px;
