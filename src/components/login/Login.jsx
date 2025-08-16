@@ -26,22 +26,6 @@ function Login() {
     }
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setloading(true);
-
-    const formData = new FormData(e.target);
-    const { email, password } = Object.fromEntries(formData);
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      console.log(err);
-      toast.error(err.message);
-    } finally {
-      setloading(false);
-    }
-  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -71,6 +55,23 @@ function Login() {
       });
 
       toast.success("Account Created! You can login now");
+    } catch (err) {
+      console.log(err);
+      toast.error(err.message);
+    } finally {
+      setloading(false);
+    }
+  };
+
+   const handleLogin = async (e) => {
+    e.preventDefault();
+    setloading(true);
+
+    const formData = new FormData(e.target);
+    const { email, password } = Object.fromEntries(formData);
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
       console.log(err);
       toast.error(err.message);
