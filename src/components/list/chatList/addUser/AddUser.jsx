@@ -1,10 +1,22 @@
 import React, { useState } from "react";
 import "./addUser.css";
 import { db } from "../../../../lib/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { useUserStore } from "../../../../lib/userStore";
 
 function AddUser() {
   const [user, setUser] = useState(null);
+  const { currentUser } = useUserStore();
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -25,9 +37,39 @@ function AddUser() {
     }
   };
 
-  const handleAdd = async() => {
+  const handleAdd = async () => {
+    const chatRef = collection(db, "chats");
+    const userChatsRef = collection(db, "userchats");
 
-  }
+    try {
+      const newChatRef = doc(chatRef);
+
+      await setDoc(newChatRef, {
+        createdAt: serverTimestamp(),
+        messages: [],
+      });
+
+      await updateDoc(doc(userChatsRef, user.id), {
+        chats: arrayUnion({
+          chatId: newChatRef.id,
+          lastMessage: "",
+          receiverId: currentUser.id,
+          updateAt: Date.now(),
+        }),
+      });
+
+      await updateDoc(doc(userChatsRef, currentUser.id), {
+        chats: arrayUnion({
+          chatId: newChatRef.id,
+          lastMessage: "",
+          receiverId: user.id,
+          updateDoc: Date.now(),
+        }),
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="addUser">

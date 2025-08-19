@@ -1,16 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../../lib/firebase";
+import { useChatStore } from "../../lib/chatStore";
 
 function Chat() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
+  const [chat, setChat] = useState();
 
-  const endRef = useRef(null)
+  const { chatId } = useChatStore();
+
+  const endRef = useRef(null);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({behaviour: "smooth"})
-  })
+    endRef.current?.scrollIntoView({ behaviour: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
+      setChat(res.data());
+    });
+
+    return () => {
+      unSub();
+    };
+  }, [chatId]);
 
   const handleEmoji = (e) => {
     setText((prev) => prev + e.emoji);
@@ -37,49 +53,75 @@ function Chat() {
       </div>
       <div className="center">
         <div className="message">
-           <img src="./avatar.png" alt="" />
-           <div className="texts">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, blanditiis illo? Doloribus sequi harum aperiam officia laudantium ad maxime eius.</p>
+          <img src="./avatar.png" alt="" />
+          <div className="texts">
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum,
+              blanditiis illo? Doloribus sequi harum aperiam officia laudantium
+              ad maxime eius.
+            </p>
             <span>1 min ago</span>
-           </div>
+          </div>
         </div>
         <div className="message own">
-           <div className="texts">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, blanditiis illo? Doloribus sequi harum aperiam officia laudantium ad maxime eius.</p>
+          <div className="texts">
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum,
+              blanditiis illo? Doloribus sequi harum aperiam officia laudantium
+              ad maxime eius.
+            </p>
             <span>1 min ago</span>
-           </div>
+          </div>
         </div>
         <div className="message">
-           <img src="./avatar.png" alt="" />
-           <div className="texts">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, blanditiis illo? Doloribus sequi harum aperiam officia laudantium ad maxime eius.</p>
+          <img src="./avatar.png" alt="" />
+          <div className="texts">
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum,
+              blanditiis illo? Doloribus sequi harum aperiam officia laudantium
+              ad maxime eius.
+            </p>
             <span>1 min ago</span>
-           </div>
+          </div>
         </div>
         <div className="message own">
-           <div className="texts">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, blanditiis illo? Doloribus sequi harum aperiam officia laudantium ad maxime eius.</p>
+          <div className="texts">
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum,
+              blanditiis illo? Doloribus sequi harum aperiam officia laudantium
+              ad maxime eius.
+            </p>
             <span>1 min ago</span>
-           </div>
+          </div>
         </div>
         <div className="message">
-           <img src="./avatar.png" alt="" />
-           <div className="texts">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, blanditiis illo? Doloribus sequi harum aperiam officia laudantium ad maxime eius.</p>
+          <img src="./avatar.png" alt="" />
+          <div className="texts">
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum,
+              blanditiis illo? Doloribus sequi harum aperiam officia laudantium
+              ad maxime eius.
+            </p>
             <span>1 min ago</span>
-           </div>
+          </div>
         </div>
-         <div className="message own">
-           <div className="texts">
-            <img src="https://images.pexels.com/photos/33231473/pexels-photo-33231473.jpeg" alt="" />
+        <div className="message own">
+          <div className="texts">
+            <img
+              src="https://images.pexels.com/photos/33231473/pexels-photo-33231473.jpeg"
+              alt=""
+            />
 
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, blanditiis illo? Doloribus sequi harum aperiam officia laudantium ad maxime eius.</p>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum,
+              blanditiis illo? Doloribus sequi harum aperiam officia laudantium
+              ad maxime eius.
+            </p>
             <span>1 min ago</span>
-           </div>
+          </div>
         </div>
 
         <div ref={endRef}></div>
-       
       </div>
       <div className="bottom">
         <div className="icons">
