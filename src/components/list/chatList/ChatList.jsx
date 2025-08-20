@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./chatList.css";
-import AddUser from "./addUser/addUser";
 import { useUserStore } from "../../../lib/userStore";
 import { doc, onSnapshot, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
 import { useChatStore } from "../../../lib/chatStore";
+import AddUser from "./addUser/AddUser";
 
 function ChatList() {
   const [addMode, setAddMode] = useState(false);
