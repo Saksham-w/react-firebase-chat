@@ -7,7 +7,7 @@
 }
 
 body {
-  background-image: url("./bg.jpg");
+  background-image: url("/bg.jpg");
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,7 +16,7 @@ body {
 }
 
 .container {
-  background-color: rebeccapurple;
+  /* background-color: rebeccapurple; */
   border-radius: 12px;
   width: 80vw;
   height: 90vh;
