@@ -1,15 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
-import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import {
+  arrayUnion,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
 import { useUserStore } from "../../lib/userStore";
+import { uploadToCloudinary } from "../../lib/upload";
 
 function Chat() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [chat, setChat] = useState();
+  const [img, setImg] = useState({
+    file: null,
+    url: "",
+  });
 
   const { chatId, user } = useChatStore();
   const { currentUser } = useUserStore();
@@ -35,15 +46,31 @@ function Chat() {
     setOpen(false);
   };
 
+  const handleImage = (e) => {
+    if (e.target.files[0]) {
+      setImg({
+        file: e.target.files[0],
+        url: URL.createObjectURL(e.target.files[0]),
+      });
+    }
+  };
+
   const handleSend = async () => {
-    if (text === "") return;
+    if (text === "" && !img.file) return;
+
+    let imgUrl = null;
 
     try {
+      if (img.file) {
+        const result = await uploadToCloudinary(img.file);
+        imgUrl = result.secure_url;
+      }
       await updateDoc(doc(db, "chats", chatId), {
         messages: arrayUnion({
           senderId: currentUser.id,
           text,
           createdAt: new Date(),
+          ...(imgUrl && { img: imgUrl }),
         }),
       });
 
@@ -61,7 +88,8 @@ function Chat() {
 
           if (chatIndex !== -1) {
             userChatsData.chats[chatIndex].lastMessage = text;
-            userChatsData.chats[chatIndex].isSeen = id === currentUser.id ? true : false;
+            userChatsData.chats[chatIndex].isSeen =
+              id === currentUser.id ? true : false;
             userChatsData.chats[chatIndex].updatedAt = Date.now();
 
             await updateDoc(userChatsRef, {
@@ -73,6 +101,13 @@ function Chat() {
     } catch (err) {
       console.log(err);
     }
+
+    setImg({
+      file: null,
+      url: "",
+    });
+
+    setText("");
   };
 
   return (
@@ -93,7 +128,7 @@ function Chat() {
       </div>
       <div className="center">
         {chat?.messages?.map((message) => (
-          <div className="message own" key={message?.createdAt}>
+          <div className={message.senderId === currentUser.id ? "message own": "message"} key={message?.createdAt}>
             <div className="texts">
               {message.img && <img src={message.img} alt="" />}
 
@@ -102,13 +137,27 @@ function Chat() {
             </div>
           </div>
         ))}
-        {}
+        {img.url && (
+          <div className="message own">
+            <div className="texts">
+              <img src={img.url} alt="" />
+            </div>
+          </div>
+        )}
 
         <div ref={endRef}></div>
       </div>
       <div className="bottom">
         <div className="icons">
-          <img src="./img.png" alt="" />
+          <label htmlFor="file">
+            <img src="./img.png" alt="" />
+          </label>
+          <input
+            type="file"
+            id="file"
+            style={{ display: "none" }}
+            onChange={handleImage}
+          />
           <img src="./camera.png" alt="" />
           <img src="./mic.png" alt="" />
         </div>
