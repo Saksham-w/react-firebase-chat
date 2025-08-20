@@ -13,7 +13,7 @@ import { useChatStore } from "../../lib/chatStore";
 import { useUserStore } from "../../lib/userStore";
 import { uploadToCloudinary } from "../../lib/upload";
 
-function Chat() {
+function Chat({ onToggleDetail, showDetail }) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [chat, setChat] = useState();
@@ -117,13 +117,16 @@ function Chat() {
           <img src={user?.avatar || "./avatar.png"} alt="" />
           <div className="texts">
             <span>{user?.username}</span>
-            <p>Lorem ipsum dolor sit amet consectetur.</p>
+            {/* <p>Lorem ipsum dolor sit amet consectetur.</p> */}
           </div>
         </div>
         <div className="icons">
-          <img src="./phone.png" alt="" />
-          <img src="./video.png" alt="" />
-          <img src="./info.png" alt="" />
+          <img
+            src="./info.png"
+            alt=""
+            style={{ cursor: "pointer" }}
+            onClick={onToggleDetail}
+          />
         </div>
       </div>
       <div className="center">
@@ -158,8 +161,8 @@ function Chat() {
             style={{ display: "none" }}
             onChange={handleImage}
           />
-          <img src="./camera.png" alt="" />
-          <img src="./mic.png" alt="" />
+          {/* <img src="./camera.png" alt="" />
+          <img src="./mic.png" alt="" /> */}
         </div>
         <input
           type="text"
@@ -167,6 +170,12 @@ function Chat() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           disabled={isCurrentUserBlocked || isReceiverBlocked}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
         />
         <div className="emoji">
           <img

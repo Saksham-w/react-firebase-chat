@@ -11,10 +11,12 @@ import {
   setDoc,
   updateDoc,
   where,
+  getDoc,
 } from "firebase/firestore";
 import { useUserStore } from "../../../../lib/userStore";
+import { useChatStore } from "../../../../lib/chatStore";
 
-function AddUser() {
+function AddUser({ onClose }) {
   const [user, setUser] = useState(null);
   const { currentUser } = useUserStore();
 
@@ -25,7 +27,6 @@ function AddUser() {
 
     try {
       const userRef = collection(db, "users");
-
       const q = query(userRef, where("username", "==", username));
       const querySnapshot = await getDocs(q);
 
@@ -38,6 +39,21 @@ function AddUser() {
   };
 
   const handleAdd = async () => {
+    // Check if chat already exists
+    const userChatsDocRef = doc(db, "userchats", currentUser.id);
+    const userChatsSnap = await getDoc(userChatsDocRef);
+
+    if (userChatsSnap.exists()) {
+      const chats = userChatsSnap.data().chats || [];
+      const alreadyExists = chats.some(
+        (chat) => chat.receiverId === user.id
+      );
+      if (alreadyExists) {
+        toast.error("Chat with this user already exists!");
+        return;
+      }
+    }
+
     const chatRef = collection(db, "chats");
     const userChatsRef = collection(db, "userchats");
 
@@ -66,6 +82,8 @@ function AddUser() {
           updateDoc: Date.now(),
         }),
       });
+
+      if (onClose) onClose(); // Close the popover after adding
     } catch (err) {
       console.log(err);
     }

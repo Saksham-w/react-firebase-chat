@@ -8,6 +8,7 @@ import {
 import { auth, db } from "../../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { uploadToCloudinary } from "../../lib/upload";
+import { useChatStore } from "../../lib/chatStore";
 
 function Login() {
   const [avatar, setAvatar] = useState({
@@ -15,7 +16,8 @@ function Login() {
     url: "",
   });
 
-  const [loading, setloading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [registerLoading, setRegisterLoading] = useState(false);
 
   const handleAvatar = (e) => {
     if (e.target.files[0]) {
@@ -26,10 +28,27 @@ function Login() {
     }
   };
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginLoading(true);
+
+    const formData = new FormData(e.target);
+    const { email, password } = Object.fromEntries(formData);
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      useChatStore.getState().reset(); // <-- Reset chat store after login
+    } catch (err) {
+      console.log(err);
+      toast.error(err.message);
+    } finally {
+      setLoginLoading(false);
+    }
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setloading(true);
+    setRegisterLoading(true);
     const formData = new FormData(e.target);
     const { username, email, password } = Object.fromEntries(formData);
 
@@ -55,28 +74,12 @@ function Login() {
       });
 
       toast.success("Account Created! You can login now");
+      useChatStore.getState().reset(); // <-- Reset chat store after signup
     } catch (err) {
       console.log(err);
       toast.error(err.message);
     } finally {
-      setloading(false);
-    }
-  };
-
-   const handleLogin = async (e) => {
-    e.preventDefault();
-    setloading(true);
-
-    const formData = new FormData(e.target);
-    const { email, password } = Object.fromEntries(formData);
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      console.log(err);
-      toast.error(err.message);
-    } finally {
-      setloading(false);
+      setRegisterLoading(false);
     }
   };
 
@@ -87,7 +90,9 @@ function Login() {
         <form onSubmit={handleLogin}>
           <input type="text" placeholder="Email" name="email" />
           <input type="password" placeholder="Password" name="password" />
-          <button disabled={loading}>{loading ? "Loading" : "Sign In"}</button>
+          <button disabled={loginLoading}>
+            {loginLoading ? "Signing In..." : "Sign In"}
+          </button>
         </form>
       </div>
       <div className="separator"></div>
@@ -107,7 +112,9 @@ function Login() {
           <input type="text" placeholder="Username" name="username" />
           <input type="text" placeholder="Email" name="email" />
           <input type="password" placeholder="Password" name="password" />
-          <button disabled={loading}>{loading ? "Loading" : "Sign Up"}</button>
+          <button disabled={registerLoading}>
+            {registerLoading ? "Signing Up..." : "Sign Up"}
+          </button>
         </form>
       </div>
     </div>
