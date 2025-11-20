@@ -45,6 +45,13 @@ const App = () => {
         });
       } else {
         setIsAuthenticating(false);
+        // Fix: set isLoading to false if no user
+        if (
+          typeof useUserStore.getState().isLoading !== "undefined" &&
+          useUserStore.getState().isLoading
+        ) {
+          useUserStore.setState({ isLoading: false });
+        }
       }
     });
     return () => {
