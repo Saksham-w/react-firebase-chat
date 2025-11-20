@@ -13,32 +13,43 @@ import { useChatStore } from "../../lib/chatStore";
 import { useUserStore } from "../../lib/userStore";
 import { uploadToCloudinary } from "../../lib/upload";
 
-function Chat({ onToggleDetail, showDetail }) {
+function Chat({ onToggleDetail, showDetail, onBack, isMobile, className }) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [chat, setChat] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   const [img, setImg] = useState({
     file: null,
     url: "",
   });
 
-  const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
+  const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } =
+    useChatStore();
   const { currentUser } = useUserStore();
 
   const endRef = useRef(null);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behaviour: "smooth" });
-  }, []);
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat?.messages]);
 
   useEffect(() => {
+    setIsLoading(true);
     const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
       setChat(res.data());
+      setIsLoading(false);
     });
 
     return () => {
       unSub();
     };
+  }, [chatId]);
+
+  useEffect(() => {
+    // Scroll to bottom when chat changes or loads
+    setTimeout(() => {
+      endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   }, [chatId]);
 
   const handleEmoji = (e) => {
@@ -111,8 +122,30 @@ function Chat({ onToggleDetail, showDetail }) {
   };
 
   return (
-    <div className="chat">
+    <div className={`chat ${className || ""}`}>
       <div className="top">
+        {isMobile && (
+          <button
+            className="back-button"
+            onClick={onBack}
+            title="Back to chats"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        )}
         <div className="user">
           <img src={user?.avatar || "./avatar.png"} alt="" />
           <div className="texts">
@@ -121,34 +154,65 @@ function Chat({ onToggleDetail, showDetail }) {
           </div>
         </div>
         <div className="icons">
-          <img
-            src="./info.png"
-            alt=""
-            style={{ cursor: "pointer" }}
+          <div
+            className="info-button"
             onClick={onToggleDetail}
-          />
+            title="Toggle Info"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </div>
         </div>
       </div>
       <div className="center">
-        {chat?.messages?.map((message) => (
-          <div className={message.senderId === currentUser.id ? "message own": "message"} key={message?.createdAt}>
-            <div className="texts">
-              {message.img && <img src={message.img} alt="" />}
+        {isLoading ? (
+          <div className="loading-spinner">
+            <div className="spinner"></div>
+            <p>Loading messages...</p>
+          </div>
+        ) : (
+          <>
+            {chat?.messages?.map((message) => (
+              <div
+                className={
+                  message.senderId === currentUser.id
+                    ? "message own"
+                    : "message"
+                }
+                key={message?.createdAt}
+              >
+                <div className="texts">
+                  {message.img && <img src={message.img} alt="" />}
 
-              <p>{message.text}</p>
-              {/* <span>{message.createdAt}</span> */}
-            </div>
-          </div>
-        ))}
-        {img.url && (
-          <div className="message own">
-            <div className="texts">
-              <img src={img.url} alt="" />
-            </div>
-          </div>
+                  <p>{message.text}</p>
+                  {/* <span>{message.createdAt}</span> */}
+                </div>
+              </div>
+            ))}
+            {img.url && (
+              <div className="message own">
+                <div className="texts">
+                  <img src={img.url} alt="" />
+                </div>
+              </div>
+            )}
+
+            <div ref={endRef}></div>
+          </>
         )}
-
-        <div ref={endRef}></div>
       </div>
       <div className="bottom">
         <div className="icons">
@@ -166,7 +230,11 @@ function Chat({ onToggleDetail, showDetail }) {
         </div>
         <input
           type="text"
-          placeholder={isCurrentUserBlocked || isReceiverBlocked ? "You cannot send messages" : "Type a message..."}
+          placeholder={
+            isCurrentUserBlocked || isReceiverBlocked
+              ? "You cannot send messages"
+              : "Type a message..."
+          }
           value={text}
           onChange={(e) => setText(e.target.value)}
           disabled={isCurrentUserBlocked || isReceiverBlocked}
@@ -187,7 +255,11 @@ function Chat({ onToggleDetail, showDetail }) {
             <EmojiPicker open={open} onEmojiClick={handleEmoji} />
           </div>
         </div>
-        <button className="sendButton" onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}>
+        <button
+          className="sendButton"
+          onClick={handleSend}
+          disabled={isCurrentUserBlocked || isReceiverBlocked}
+        >
           Send
         </button>
       </div>

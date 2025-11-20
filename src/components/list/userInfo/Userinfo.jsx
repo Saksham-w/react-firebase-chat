@@ -1,24 +1,41 @@
-import React from 'react'
-import "./userInfo.css"
-import { useUserStore } from '../../../lib/userStore'
+import React from "react";
+import "./userInfo.css";
+import { useUserStore } from "../../../lib/userStore";
+import { auth } from "../../../lib/firebase";
 
 function Userinfo() {
+  const { currentUser } = useUserStore();
 
-const {currentUser} = useUserStore();
+  const handleLogout = () => {
+    auth.signOut();
+  };
 
   return (
-    <div className='userInfo'>
-        <div className='user'>
-            <img src={currentUser.avatar || "avatar.png"} alt="" />
-            <h2>{currentUser.username || "John Doe"}</h2>
-        </div>
-        {/* <div className="icons">
-            <img src="./more.png" alt="" />
-            <img src="./video.png" alt="" />
-            <img src="./edit.png" alt="" />
-        </div> */}
+    <div className="userInfo">
+      <div className="user">
+        <img src={currentUser.avatar || "avatar.png"} alt="" />
+        <h2>{currentUser.username || "John Doe"}</h2>
+      </div>
+      <button className="logout-btn" onClick={handleLogout} title="Logout">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Logout
+      </button>
     </div>
-  )
+  );
 }
 
-export default Userinfo
+export default Userinfo;

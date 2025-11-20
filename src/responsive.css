@@ -1,0 +1,71 @@
+/* Additional responsive utilities */
+
+.list-wrapper,
+.chat-wrapper,
+.detail-wrapper {
+  display: flex;
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  /* Mobile-specific adjustments */
+  .container {
+    flex-direction: row;
+    position: relative;
+  }
+
+  .list-wrapper,
+  .chat-wrapper,
+  .detail-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s ease;
+    z-index: 1;
+  }
+
+  .list-wrapper.hidden {
+    transform: translateX(-100%);
+    visibility: hidden;
+  }
+
+  .chat-wrapper.hidden {
+    transform: translateX(-100%);
+    visibility: hidden;
+  }
+
+  .detail-wrapper {
+    transform: translateX(100%);
+    visibility: hidden;
+    z-index: 2;
+  }
+
+  .detail-wrapper.active {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .detail {
+    width: 100%;
+    border-left: none;
+  }
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .container {
+    width: 95vw;
+    height: 95vh;
+  }
+}
+
+/* Ensure smooth transitions */
+@media (prefers-reduced-motion: no-preference) {
+  .chat,
+  .detail,
+  .list {
+    transition: all 0.3s ease;
+  }
+}

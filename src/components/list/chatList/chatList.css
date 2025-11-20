@@ -1,72 +1,231 @@
 .chatList {
   flex: 1;
   overflow: scroll;
+
   .search {
     display: flex;
     align-items: center;
-    gap: 20px;
-    padding: 20px;
+    gap: 12px;
+    padding: 20px 24px;
 
     .searchBar {
       flex: 1;
-      background-color: rgba(17, 25, 40, 0.5);
+      background: rgba(30, 30, 45, 0.6);
       display: flex;
       align-items: center;
-      gap: 20px;
-      border-radius: 10px;
-      padding: 10px; 
-      
+      gap: 12px;
+      border-radius: 12px;
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s ease;
+
+      &:focus-within {
+        background: rgba(40, 40, 55, 0.7);
+        border-color: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
       input {
         background-color: transparent;
         border: none;
         outline: none;
         color: white;
         flex: 1;
+        font-size: 14px;
+        font-weight: 400;
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
       }
 
       img {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
+        opacity: 0.6;
       }
     }
 
     .add {
-      width: 36px;
-      height: 36px;
-      background-color: rgba(17, 25, 40, 0.5);
+      width: 44px;
+      height: 44px;
+      background: rgba(30, 30, 45, 0.6);
       padding: 10px;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background: rgba(40, 40, 55, 0.8);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
     }
   }
 
   .item {
     display: flex;
     align-items: center;
-    gap: 20px;
-    padding: 20px;
+    gap: 16px;
+    padding: 16px 24px;
     cursor: pointer;
-    border-bottom: 1px solid #dddddd35;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
 
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 3px;
+      background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover {
+      background: rgba(30, 30, 45, 0.5);
+      padding-left: 28px;
+
+      &::before {
+        opacity: 1;
+      }
+    }
     img {
-      width: 50px;
-      height: 50px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    &:hover img {
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
     }
 
     .texts {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 6px;
+      flex: 1;
 
       span {
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 15px;
+        letter-spacing: -0.3px;
       }
 
       p {
-        font-size: 14px;
-        font-weight: 300;
+        font-size: 13px;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.6);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+/* Tablet styles */
+@media (max-width: 1024px) {
+  .chatList {
+    .search {
+      padding: 16px 20px;
+
+      .searchBar {
+        padding: 10px 14px;
+
+        input {
+          font-size: 13px;
+        }
+      }
+
+      .add {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    .item {
+      padding: 14px 20px;
+
+      img {
+        width: 48px;
+        height: 48px;
+      }
+
+      .texts {
+        span {
+          font-size: 14px;
+        }
+
+        p {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .chatList {
+    .search {
+      padding: 14px 16px;
+      gap: 10px;
+
+      .searchBar {
+        padding: 10px 12px;
+
+        input {
+          font-size: 14px;
+        }
+
+        img {
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .add {
+        width: 38px;
+        height: 38px;
+        padding: 8px;
+      }
+    }
+
+    .item {
+      padding: 12px 16px;
+      gap: 12px;
+
+      img {
+        width: 44px;
+        height: 44px;
+      }
+
+      .texts {
+        gap: 4px;
+
+        span {
+          font-size: 14px;
+        }
+
+        p {
+          font-size: 12px;
+        }
       }
     }
   }
