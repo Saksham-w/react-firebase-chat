@@ -216,8 +216,46 @@ function Chat({ onToggleDetail, showDetail, onBack, isMobile, className }) {
       </div>
       <div className="bottom">
         <div className="icons">
-          <label htmlFor="file">
-            <img src="./img.png" alt="" />
+          <label
+            htmlFor="file"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 40,
+              height: 40,
+              cursor: "pointer",
+              padding: 0,
+            }}
+          >
+            <img
+              src="./img.png"
+              alt="Send image"
+              onError={(e) => {
+                e.target.style.display = "none";
+                e.target.nextSibling.style.display = "inline-block";
+              }}
+              style={{
+                width: 32,
+                height: 32,
+                cursor: "pointer",
+                display: "block",
+              }}
+            />
+            <span style={{ display: "none", lineHeight: 0 }}>
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#4a5568"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21.44 11.05l-8.49 8.49a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.19 9.19a1.5 1.5 0 0 1-2.12-2.12l8.49-8.49" />
+              </svg>
+            </span>
           </label>
           <input
             type="file"
