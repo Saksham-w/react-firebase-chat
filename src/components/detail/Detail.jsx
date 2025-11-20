@@ -105,7 +105,16 @@ function Detail({ onClose, isMobile }) {
             ? "Unblock"
             : "Block User"}
         </button>
-        <button className="logout" onClick={() => auth.signOut()}>
+        <button
+          className="logout"
+          onClick={async () => {
+            await auth.signOut();
+            // Reset Zustand stores so UI updates immediately
+            if (useUserStore)
+              useUserStore.setState({ currentUser: null, isLoading: false });
+            if (useChatStore) useChatStore.getState().reset?.();
+          }}
+        >
           Logout
         </button>
       </div>

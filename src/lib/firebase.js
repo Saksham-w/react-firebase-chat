@@ -13,12 +13,12 @@ const firebaseConfig = {
   projectId: "reactchat-c34ca",
   storageBucket: "reactchat-c34ca.firebasestorage.app",
   messagingSenderId: "401328830463",
-  appId: "1:401328830463:web:ab06df0962417a0bbdd9ca"
+  appId: "1:401328830463:web:ab06df0962417a0bbdd9ca",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth()
-export const db = getFirestore(app)
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 // export const storage = getStorage(app)

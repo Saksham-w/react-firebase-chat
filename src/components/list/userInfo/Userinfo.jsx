@@ -1,13 +1,17 @@
 import React from "react";
 import "./userInfo.css";
 import { useUserStore } from "../../../lib/userStore";
+import { useChatStore } from "../../../lib/chatStore";
 import { auth } from "../../../lib/firebase";
 
 function Userinfo() {
   const { currentUser } = useUserStore();
 
-  const handleLogout = () => {
-    auth.signOut();
+  const handleLogout = async () => {
+    await auth.signOut();
+    // Reset Zustand stores so UI updates immediately
+    useUserStore.setState({ currentUser: null, isLoading: false });
+    if (useChatStore) useChatStore.getState().reset?.();
   };
 
   return (
